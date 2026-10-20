@@ -116,3 +116,10 @@ Este inventario se enmarca en el proyecto de investigación **MODERA**, «Modera
 ## Licencia
 
 Los datos y los contenidos de este inventario se publican bajo licencia [Creative Commons Atribución 4.0 Internacional (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.es): pueden reutilizarse para cualquier fin, citando la fuente.
+## Registro de cambios
+
+| Fecha | Cambio | Motivo |
+|---|---|---|
+| 2026-10-20 | Organización del Proyecto en tres tipos de hilo | Evitar pérdida de contexto en hilos largos |
+| 2026-10-20 | Ficha única y estado de verificación | Unificar plantilla, chuleta y web |
+| 2026-10-20 | Criterio sobre jailbreaks | Completar los criterios de inclusión |
