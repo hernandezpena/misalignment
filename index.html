@@ -145,6 +145,8 @@ button.clear { font: 500 .9rem var(--sans); color: var(--accent); background: no
 .tags { grid-column: 3; grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .tag { font-size: .78rem; font-weight: 500; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); white-space: nowrap; color: var(--muted); }
 .tag.sev { color: var(--sev); border-color: var(--sev); }
+.tag.pend { border-style: dashed; color: var(--ink); }
+.case-body p.nota-verif { border-left: 3px solid var(--rule); padding: 6px 12px; color: var(--muted); font-size: .9rem; }
 .case-body { padding: 0 18px 20px 98px; display: none; max-width: 900px; }
 .case.open .case-body { display: block; }
 .case-body p { margin: 0 0 12px; }
@@ -270,6 +272,7 @@ footer p { margin: 0 0 10px; }
         <h2>Metodología</h2>
         <p>Se entiende por desalineación que un sistema de IA persiga de forma sistemática un objetivo o una conducta distinta de la pretendida por quienes legítimamente lo dirigen, o contraria a los valores que declara el propio laboratorio. Se excluyen el uso malicioso por terceros y los errores factuales aislados.</p>
         <p>Las fuentes son, por orden de preferencia, documentación de los laboratorios (fichas técnicas, informes y artículos), evaluaciones de terceros independientes, resoluciones y procedimientos públicos, y periodismo de investigación. Los casos con hechos o causalidad en discusión se marcan como controvertidos.</p>
+        <p>Cada caso indica su estado de verificación: «Verificado», cuando la fuente principal es primaria, o «En desarrollo (información periodística)», cuando solo consta en prensa de referencia y está pendiente de contraste.</p>
         <dl>
           <dt>Gravedad alta</dt><dd>Daño real a personas o terceros, afectación de derechos fundamentales o conducta autónoma con capacidad de daño grave.</dd>
           <dt>Gravedad media</dt><dd>Daño limitado o reversible, o evidencia experimental sólida de un riesgo serio.</dd>
@@ -369,7 +372,7 @@ function preparar(filas) {
     gravedad: GRAVEDADES.find(g => norm(g) === norm(r.gravedad)) || "Media",
     contexto: CONTEXTOS[r.contexto] ? r.contexto : (norm(r.contexto).includes("d") && norm(r.contexto).includes("e") ? "E→D" : (r.contexto || "E")),
     anio: parseInt((r.orden || r.fecha).match(/\d{4}/)?.[0] || "0", 10),
-    _texto: norm([r.id, r.titulo, r.modelo, r.laboratorios, r.descripcion, r.evidencia, r.respuesta, r.relevancia_ue].join(" "))
+    _texto: norm([r.id, r.titulo, r.modelo, r.laboratorios, r.descripcion, r.evidencia, r.respuesta, r.relevancia_ue, r.verificacion].join(" "))
   })).sort((a, b) => (a.orden || "").localeCompare(b.orden || "") || a.id.localeCompare(b.id));
 }
 
@@ -521,6 +524,9 @@ function marcarSeleccion() {
 }
 
 /* Fichas */
+const enDesarrollo = c => norm(c.verificacion).startsWith("en desarrollo");
+const NOTA_DESARROLLO = "Caso documentado únicamente por prensa de referencia. Los hechos están pendientes de contraste con una fuente primaria (documentación del desarrollador, artículo científico, informe de un evaluador independiente o resolución judicial o administrativa), y la ficha puede ser objeto de corrección.";
+
 function fichaHTML(c) {
   const cats = c.cats.map(k => CATEGORIAS[k] ? `${k} ${CATEGORIAS[k][0]}` : k).join("; ");
   const evid = c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.evidencia || c.url)}</a>` : esc(c.evidencia);
@@ -530,15 +536,17 @@ function fichaHTML(c) {
       <span class="cid-l">${esc(c.id)}</span>
       <span class="case-title">${esc(c.titulo)}</span>
       <span class="case-meta">${esc(c.fecha)}. ${esc(c.labs.join(", "))}</span>
-      <span class="tags"><span class="tag sev">Gravedad ${esc(c.gravedad.toLowerCase())}</span><span class="tag">${esc(CONTEXTOS[c.contexto] || c.contexto)}</span>${norm(c.discutido).startsWith("s") ? '<span class="tag">Controvertido</span>' : ""}</span>
+      <span class="tags"><span class="tag sev">Gravedad ${esc(c.gravedad.toLowerCase())}</span><span class="tag">${esc(CONTEXTOS[c.contexto] || c.contexto)}</span>${norm(c.discutido).startsWith("s") ? '<span class="tag">Controvertido</span>' : ""}${enDesarrollo(c) ? '<span class="tag pend">En desarrollo</span>' : ""}</span>
     </button>
     <div class="case-body" id="b-${esc(c.id)}">
       <p>${esc(c.descripcion)}</p>
+      ${enDesarrollo(c) ? `<p class="nota-verif">${NOTA_DESARROLLO}</p>` : ""}
       <dl>
         ${fila("Modelo", esc(c.modelo))}
         ${fila("Tipología", esc(cats))}
         ${fila("Valoración de la gravedad", esc(c.gravedad + (c.nota_gravedad ? ". " + c.nota_gravedad : "")))}
         ${fila("Fuente", evid)}
+        ${fila("Estado de verificación", esc(c.verificacion))}
         ${fila("Respuesta del laboratorio", esc(c.respuesta))}
         ${fila("Marco jurídico de la UE", esc(c.relevancia_ue))}
       </dl>

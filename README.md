@@ -31,6 +31,13 @@ La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los
 
 **Fuentes**, por orden de preferencia: documentación de los laboratorios (fichas técnicas, informes y artículos), evaluaciones de terceros independientes, resoluciones y procedimientos públicos, y periodismo de investigación. Los casos con hechos o causalidad en discusión se marcan como controvertidos.
 
+**Estado de verificación**
+
+| Valor | Criterio |
+|---|---|
+| Verificado | La fuente principal es primaria: documentación o informe del desarrollador, artículo científico, informe de un evaluador independiente o resolución judicial o administrativa. |
+| En desarrollo (información periodística) | El caso solo está documentado por prensa de referencia y queda pendiente de contraste con una fuente primaria. La ficha lo advierte expresamente. |
+
 **Gravedad**
 
 | Nivel | Criterio |
@@ -81,6 +88,7 @@ La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los
 | `descripcion` | Descripción del caso | |
 | `evidencia` | Fuente principal | |
 | `url` | Enlace a la fuente principal | |
+| `verificacion` | `Verificado` o `En desarrollo (información periodística)` | `Verificado` |
 | `respuesta` | Respuesta del laboratorio | |
 | `relevancia_ue` | Relevancia en el marco jurídico de la UE | |
 
