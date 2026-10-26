@@ -20,14 +20,29 @@ El observatorio tiene carácter jurídico, no periodístico: los contenidos son 
 | Archivo | Función |
 |---|---|
 | `index.html` | Página web del inventario. No es necesario modificarla. |
-| `incidentes.csv` | Datos del inventario: una fila por caso. Es el único archivo que se actualiza. |
+| `incidentes.csv` | Datos del inventario de desalineación: una fila por caso. |
+| `gobernanza.csv` | Inventario separado de fallos de gobernanza interna de los laboratorios (véase más abajo). |
 | `README.md` | Este documento. |
 
 La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los gráficos, el mapa de calor y las fichas de casos.
 
 ## Criterios del inventario
 
-**Definición.** Se entiende por desalineación que un sistema de IA persiga de forma sistemática un objetivo o una conducta distinta de la pretendida por quienes legítimamente lo dirigen, o contraria a los valores que declara el propio laboratorio. Se excluyen el uso malicioso por terceros y los errores factuales aislados.
+**Definición.** Se entiende por desalineación que un sistema de IA persiga de forma sistemática un objetivo o una conducta distinta de la pretendida por quienes legítimamente lo dirigen, o contraria a los valores que declara el propio laboratorio.
+
+**Exclusiones.** Se excluyen:
+
+- el uso malicioso por terceros;
+- los *jailbreaks*, salvo que el modelo inicie la elusión o haga por su cuenta algo de la tipología C1–C9;
+- los errores factuales aislados y las alucinaciones, aunque tengan efectos jurídicos;
+- las salidas aisladas sin indicio de conducta sistemática.
+
+**Excepciones.** Se mantienen, marcados como controvertidos y con una nota que explica la excepción:
+
+- los casos en que terceros indujeron la conducta, cuando son un precedente relevante de aprendizaje en despliegue sin salvaguardas (MA-01);
+- las salidas aisladas que contradicen de forma grave los valores declarados del laboratorio, se dirigen contra la persona usuaria (hostilidad o incitación al daño) y el laboratorio reconoce como contrarias a sus políticas (MA-08).
+
+**Fallos de gobernanza.** Cuando la conducta del sistema se explica por una decisión u omisión organizativa del desarrollador, y no porque el modelo persiga por su cuenta otra conducta, el caso se registra en el inventario de gobernanza (`gobernanza.csv`), no en este.
 
 **Fuentes**, por orden de preferencia: documentación de los laboratorios (fichas técnicas, informes y artículos), evaluaciones de terceros independientes, resoluciones y procedimientos públicos, y periodismo de investigación. Los casos con hechos o causalidad en discusión se marcan como controvertidos.
 
@@ -42,7 +57,7 @@ La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los
 
 | Nivel | Criterio |
 |---|---|
-| Alta | Daño real a personas o terceros, afectación de derechos fundamentales o capacidad demostrada de causar daño grave. |
+| Alta | Daño real a personas o terceros, afectación de derechos fundamentales o capacidad demostrada de causar daño grave, entendida como conducta observada de forma robusta (en varios modelos o sin inducción) que permitiría eludir el control humano. |
 | Media | Daño limitado o reversible, o riesgo serio observado en pruebas. |
 | Baja | Sin daño real y conducta poco frecuente o muy inducida. |
 
@@ -65,8 +80,31 @@ La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los
 | C5 | Complacencia y manipulación | Adulación, refuerzo de delirios, dependencia emocional y autolesiones. |
 | C6 | Valores en contenidos | Discurso de odio, sesgo ideológico, sexualización y sesgos políticos incrustados. |
 | C7 | Desalineación emergente | Generalización indebida a partir de un ajuste fino o del hackeo de recompensa. |
-| C8 | Opacidad y conciencia de evaluación | Razonamiento infiel u ofuscado; conducta distinta cuando el modelo detecta la prueba. |
+| C8 | Opacidad y conciencia de evaluación | Razonamiento infiel u ofuscado; conducta distinta cuando el modelo cree estar en una prueba, o cuando da por simulado un entorno real. La ocultación de acciones ante usuarios o supervisores se clasifica en C1. |
 | C9 | Colusión entre agentes | Canales no autorizados y cooperación entre instancias para eludir controles. |
+
+## Inventario de fallos de gobernanza
+
+`gobernanza.csv` recoge los **fallos de gobernanza interna** de los laboratorios: decisiones u omisiones organizativas del desarrollador (o de sus evaluadores y proveedores) que producen o permiten conductas dañinas de sus sistemas, o que incumplen compromisos de seguridad declarados, sin que la causa sea que el modelo persiga por su cuenta otra conducta. Un mismo hecho puede tener una dimensión de desalineación (ficha MA-xx) y otra de gobernanza (ficha GOB-xx); la columna `casos_relacionados` las enlaza.
+
+**Tipos**
+
+| Código | Tipo | Contenido |
+|---|---|---|
+| G1 | Control de cambios y accesos internos | Modificaciones no autorizadas de prompts, pesos, código o configuraciones; accesos indebidos de empleados o contratistas. |
+| G2 | Evaluación y decisión de despliegue | Lanzar sin evaluar, pese a advertencias o con plazos de prueba insuficientes. |
+| G3 | Contención de pruebas y entornos | Entornos de evaluación o entrenamiento mal aislados, salvaguardas desactivadas, perímetro de acciones mal definido; propios o externalizados. |
+| G4 | Integridad de activos | Filtración o exposición de pesos, código, credenciales o infraestructura. |
+| G5 | Transparencia y compromisos | Fichas técnicas ausentes o tardías; incumplimiento de marcos de seguridad o compromisos voluntarios. |
+| G6 | Políticas internas contrarias a los valores declarados | Normas internas que permiten conductas que el laboratorio dice rechazar. |
+| G7 | Detección, escalado y notificación | Detección tardía, escalado interno débil, notificación tardía o discrecional a afectados y autoridades, canales de alerta. |
+| G8 | Datos personales en entrenamiento y evaluación | Uso o exposición de datos personales en entornos de agentes, entrenamiento o evaluación. |
+
+**Columnas propias:** `actor` (quién incurre en el fallo), `autor_fallo` (`Laboratorio`, `Evaluador` o `Proveedor`), `sistema`, `tipos` (G1–G8), `atribucion` (si la causa la verifica un tercero o solo la afirma el laboratorio) y `casos_relacionados`. El resto de columnas sigue los criterios de este README, incluido el estado de verificación.
+
+**Estado:** versión inicial (26 oct. 2026). Las fichas están pendientes de segunda revisión y la web todavía no las muestra.
+
+**Números retirados del inventario de desalineación:** MA-17 pasó a GOB-16 (26 oct. 2026). Los números no se reutilizan.
 
 ## Estructura de los datos
 
@@ -123,3 +161,6 @@ Los datos y los contenidos de este inventario se publican bajo licencia [Creativ
 | 2026-10-20 | Organización del Proyecto en tres tipos de hilo | Evitar pérdida de contexto en hilos largos |
 | 2026-10-20 | Ficha única y estado de verificación | Unificar plantilla, chuleta y web |
 | 2026-10-20 | Criterio sobre jailbreaks | Completar los criterios de inclusión |
+| 2026-10-26 | Criterios: exclusión de salidas aisladas y excepciones; definición de C8; criterio de gravedad Alta | Decisiones de la dirección |
+| 2026-10-26 | Fichas MA-40 a MA-44; MA-13 dividida (MA-43); MA-17 trasladada a gobernanza; actualización de fuentes y correcciones | Vigilancia semanal y revisión de fuentes |
+| 2026-10-26 | Inventario de fallos de gobernanza (`gobernanza.csv`, versión inicial) | Separar la gobernanza de la desalineación |
