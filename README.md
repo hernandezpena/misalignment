@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/33708503/README.md)
 # Inventario de casos de desalineación en IA de frontera
 
 Registro de casos documentados de desalineación (*misalignment*) en modelos de los principales laboratorios de IA.
@@ -24,7 +23,7 @@ El observatorio tiene carácter jurídico, no periodístico: los contenidos son 
 | `gobernanza.csv` | Inventario separado de fallos de gobernanza interna de los laboratorios (véase más abajo). |
 | `README.md` | Este documento. |
 
-La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los gráficos, el mapa de calor y las fichas de casos.
+La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los gráficos, el mapa de calor y las fichas de casos. La pestaña «Gobernanza» lee `gobernanza.csv` y muestra su cuadro resumen, la distribución por tipo y las fichas, con enlaces cruzados a los casos de desalineación.
 
 ## Criterios del inventario
 
@@ -102,7 +101,9 @@ La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los
 
 **Columnas propias:** `actor` (quién incurre en el fallo), `autor_fallo` (`Laboratorio`, `Evaluador` o `Proveedor`), `sistema`, `tipos` (G1–G8), `atribucion` (si la causa la verifica un tercero o solo la afirma el laboratorio) y `casos_relacionados`. El resto de columnas sigue los criterios de este README, incluido el estado de verificación.
 
-**Estado:** versión inicial (26 oct. 2026). Las fichas están pendientes de segunda revisión y la web todavía no las muestra.
+**Estado:** prototipo en desarrollo, versión inicial (26 oct. 2026). Las fichas están pendientes de segunda revisión; la web las muestra en la pestaña «Gobernanza» desde el 27 oct. 2026, señalada como prototipo en desarrollo y con un aviso de versión inicial (constante `AVISO_GOB` de `index.html`, que se vacía al terminar la revisión).
+
+**Alcance y límites.** El inventario recoge fallos de gobernanza interna documentados en fuentes públicas hasta la fecha de actualización. No pretende ser exhaustivo ni representativo, y el número de fichas por actor no permite comparar la frecuencia de fallos entre laboratorios: depende de la información que cada uno publica (informes, fichas técnicas, comunicaciones de incidentes) y de la atención que reciben de evaluadores y prensa. La ausencia de fichas de un actor no implica que no existan fallos. Las fichas con estado «En desarrollo (información periodística)» están pendientes de contraste con una fuente primaria, y todo el inventario está pendiente de segunda revisión.
 
 **Números retirados del inventario de desalineación:** MA-17 pasó a GOB-16 (26 oct. 2026). Los números no se reutilizan.
 
@@ -164,3 +165,4 @@ Los datos y los contenidos de este inventario se publican bajo licencia [Creativ
 | 2026-10-26 | Criterios: exclusión de salidas aisladas y excepciones; definición de C8; criterio de gravedad Alta | Decisiones de la dirección |
 | 2026-10-26 | Fichas MA-40 a MA-44; MA-13 dividida (MA-43); MA-17 trasladada a gobernanza; actualización de fuentes y correcciones | Vigilancia semanal y revisión de fuentes |
 | 2026-10-26 | Inventario de fallos de gobernanza (`gobernanza.csv`, versión inicial) | Separar la gobernanza de la desalineación |
+| 2026-10-27 | Pestaña «Gobernanza» en la web (`index.html`): resumen, distribución por tipo, filtros, fichas y enlaces cruzados MA–GOB; párrafo «Alcance y límites» de gobernanza (README y web); la sección se señala como prototipo en desarrollo; correcciones mínimas de `gobernanza.csv` (enlace de GOB-24, respuesta de GOB-03 y GOB-07, referencias al RIA anteriores a su aplicabilidad, fuentes de GOB-09 y GOB-11); se elimina del README una línea suelta de enlace a un adjunto | Hacer visible el inventario de gobernanza |

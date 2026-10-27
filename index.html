@@ -168,6 +168,33 @@ footer p { margin: 0 0 10px; }
 .credits { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule); }
 .error { background: var(--surface); border: 1px solid var(--alta); border-radius: 6px; padding: 16px 18px; margin-top: 24px; }
 
+
+/* Pestañas */
+.tabs { display: flex; gap: 4px; margin-top: 18px; border-bottom: 1px solid var(--rule); }
+.tabs button { font: 500 1rem var(--sans); color: var(--muted); background: none; border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0; padding: 10px 18px; cursor: pointer; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--paper); border-color: var(--rule); border-bottom: 1px solid var(--paper); }
+.tabs .n { font-weight: 400; color: var(--muted); margin-left: 6px; }
+.tabs .tagp { font: 600 .68rem var(--sans); letter-spacing: .04em; text-transform: uppercase; color: var(--media); border: 1px solid var(--media); border-radius: 999px; padding: 1px 7px; margin-left: 8px; vertical-align: 2px; }
+.proto { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--media); border-radius: 4px; padding: 12px 16px; margin: 18px 0 20px; font-size: .95rem; color: var(--ink); max-width: 62ch; }
+
+/* Gobernanza: distribución por tipo */
+.gtipos { padding: 4px 0; }
+.gt { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 40px minmax(0, 1fr) minmax(80px, 240px) 32px; align-items: center; gap: 4px 14px; width: 100%; padding: 10px 16px; cursor: pointer; }
+.gt + .gt { border-top: 1px solid var(--rule); }
+.gt:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.gt[disabled] { cursor: default; opacity: .55; }
+.gt.sel { background: var(--band); }
+.gt-id { font-weight: 600; color: var(--muted); }
+.gt-bar { height: 10px; background: var(--band); border-radius: 5px; overflow: hidden; }
+.gt-bar i { display: block; height: 100%; background: var(--accent); }
+.gt-n { text-align: right; font-weight: 600; }
+@media (max-width: 640px) {
+  .tabs button { padding: 10px 12px; font-size: .95rem; }
+  .tabs .tagp { display: block; width: max-content; margin: 3px 0 0; }
+  .gt { grid-template-columns: 34px minmax(0, 1fr) 28px; padding: 10px 12px; }
+  .gt-bar { display: none; }
+}
+
 @media (max-width: 760px) {
   .counters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .counters div, .counters div + div { padding: 12px 12px 12px 0; border-left: 0; border-bottom: 1px solid var(--rule); }
@@ -202,6 +229,12 @@ footer p { margin: 0 0 10px; }
 </div>
 
 <div class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Inventarios del observatorio">
+    <button type="button" role="tab" id="tab-desal" data-panel="desal" aria-selected="true" aria-controls="panel-desal">Desalineación<span class="n" id="n-desal"></span></button>
+    <button type="button" role="tab" id="tab-gob" data-panel="gob" aria-selected="false" aria-controls="panel-gob" tabindex="-1">Gobernanza<span class="n" id="n-gob"></span><span class="tagp">prototipo</span></button>
+  </nav>
+
+  <div id="panel-desal" role="tabpanel" aria-labelledby="tab-desal">
   <header class="top">
     <h1>Inventario de casos de desalineación en IA de frontera</h1>
     <p class="lede">Registro de casos documentados de desalineación en modelos de los principales laboratorios de IA.</p>
@@ -263,16 +296,51 @@ footer p { margin: 0 0 10px; }
     <div class="status"><span id="count" aria-live="polite"></span><button class="clear" id="clear" type="button">Restablecer filtros</button></div>
     <ul class="cases" id="list"></ul>
   </section>
+  </div>
+
+  <div id="panel-gob" role="tabpanel" aria-labelledby="tab-gob" hidden>
+    <header class="top">
+      <h1>Inventario de fallos de gobernanza interna de los laboratorios de IA</h1>
+      <p class="proto" role="note"><b>Prototipo en desarrollo.</b> Esta sección es una versión de trabajo: las fichas, los tipos y los criterios pueden cambiar y aún no han pasado una segunda revisión.</p>
+      <p class="lede">Decisiones u omisiones organizativas de los desarrolladores de IA de frontera, de sus evaluadores o de sus proveedores que producen o permiten conductas dañinas de sus sistemas, o que incumplen compromisos de seguridad declarados. Complementa el inventario de desalineación: aquí la causa es organizativa, no una conducta que el modelo persiga por su cuenta.</p>
+      <p class="updated" id="gob-updated"></p>
+      <p class="note" id="gob-alcance"><b>Alcance y límites.</b> El inventario recoge fallos de gobernanza interna documentados en fuentes públicas hasta la fecha de actualización. No pretende ser exhaustivo ni representativo, y el número de fichas por actor no permite comparar la frecuencia de fallos entre laboratorios: depende de la información que cada uno publica (informes, fichas técnicas, comunicaciones de incidentes) y de la atención que reciben de evaluadores y prensa. La ausencia de fichas de un actor no implica que no existan fallos. Las fichas con estado «En desarrollo (información periodística)» están pendientes de contraste con una fuente primaria, y todo el inventario está pendiente de segunda revisión.</p>
+      <dl class="counters" id="gob-counters" aria-live="polite"></dl>
+    </header>
+
+    <div id="gob-error" class="error" hidden></div>
+    <div id="gob-contenido">
+      <section aria-labelledby="h-gtipos">
+        <h2 id="h-gtipos">Distribución por tipo</h2>
+        <p class="sub">Número de fichas por tipo de fallo. Una ficha puede figurar en varios tipos. Al seleccionar un tipo se muestran las fichas correspondientes.</p>
+        <div class="panel gtipos" id="gob-tipos"></div>
+      </section>
+
+      <section aria-labelledby="h-gfichas" id="gob-fichas">
+        <h2 id="h-gfichas">Fichas de fallos de gobernanza</h2>
+        <div class="filters">
+          <label>Buscar<input type="search" id="gf-q" placeholder="Actor, sistema, palabra clave…"></label>
+          <label>Actor<select id="gf-actor"></select></label>
+          <label>Tipo de fallo<select id="gf-tipo"></select></label>
+          <label>Autor del fallo<select id="gf-autor"></select></label>
+          <label>Verificación<select id="gf-verif"></select></label>
+          <label>Año<select id="gf-anio"></select></label>
+        </div>
+        <div class="status"><span id="gcount" aria-live="polite"></span><button class="clear" id="gclear" type="button">Restablecer filtros</button></div>
+        <ul class="cases" id="glist"></ul>
+      </section>
+    </div>
+  </div>
 </div>
 
 <footer>
   <div class="wrap">
-    <div class="cols">
+    <div class="cols" id="foot-met">
       <div>
         <h2>Metodología</h2>
         <p>Se entiende por desalineación que un sistema de IA persiga de forma sistemática un objetivo o una conducta distinta de la pretendida por quienes legítimamente lo dirigen, o contraria a los valores que declara el propio laboratorio. Se excluyen el uso malicioso por terceros y los errores factuales aislados.</p>
         <p>Las fuentes son, por orden de preferencia, documentación de los laboratorios (fichas técnicas, informes y artículos), evaluaciones de terceros independientes, resoluciones y procedimientos públicos, y periodismo de investigación. Los casos con hechos o causalidad en discusión se marcan como controvertidos.</p>
-        <p>Cada caso indica su estado de verificación: «Verificado», cuando la fuente principal es primaria, o «En desarrollo (información periodística)», cuando solo consta en prensa de referencia y está pendiente de contraste.</p>
+        <p>Cada caso indica su estado de verificación: «Verificado», cuando los hechos constan en una fuente directa (documentación del actor, autoridad, evaluador o empresa de seguridad), o «En desarrollo (información periodística)», cuando solo consta en prensa de referencia y está pendiente de contraste.</p>
         <dl>
           <dt>Gravedad alta</dt><dd>Daño real a personas o terceros, afectación de derechos fundamentales o conducta autónoma con capacidad de daño grave.</dd>
           <dt>Gravedad media</dt><dd>Daño limitado o reversible, o evidencia experimental sólida de un riesgo serio.</dd>
@@ -549,6 +617,7 @@ function fichaHTML(c) {
         ${fila("Estado de verificación", esc(c.verificacion))}
         ${fila("Respuesta del laboratorio", esc(c.respuesta))}
         ${fila("Marco jurídico de la UE", esc(c.relevancia_ue))}
+        ${fila("Fallos de gobernanza relacionados", gobDe(c.id))}
       </dl>
     </div>
   </li>`;
@@ -624,13 +693,266 @@ function cabecera(fecha) {
   $("#cite").innerHTML = `Hernández Peña, J. C. y Polanco, J. (dirs.) (${a1}). <i>${esc(TITULO)}</i>. Observatorio de PrivaIA Lab Navarra, Facultad de Derecho, Universidad de Navarra. Disponible en: ${esc(url)} [consulta: ${hoy}].`;
 }
 
+/* ===== Inventario de gobernanza (pestaña «Gobernanza») ===== */
+/* Taxonomía cerrada G1–G8. Solo se edita si cambia la clasificación. */
+const GTIPOS = {
+  G1: ["Control de cambios y accesos internos", "Modificaciones no autorizadas de prompts, pesos, código o configuraciones; accesos indebidos de empleados o contratistas."],
+  G2: ["Evaluación y decisión de despliegue", "Lanzar sin evaluar, pese a advertencias o con plazos de prueba insuficientes."],
+  G3: ["Contención de pruebas y entornos", "Entornos de evaluación o entrenamiento mal aislados, salvaguardas desactivadas, perímetro de acciones mal definido; propios o externalizados."],
+  G4: ["Integridad de activos", "Filtración o exposición de pesos, código, credenciales o infraestructura."],
+  G5: ["Transparencia y compromisos", "Fichas técnicas ausentes o tardías; incumplimiento de marcos de seguridad o compromisos voluntarios."],
+  G6: ["Políticas internas contrarias a los valores declarados", "Normas internas que permiten conductas que el laboratorio dice rechazar."],
+  G7: ["Detección, escalado y notificación", "Detección tardía, escalado interno débil, notificación tardía o discrecional a afectados y autoridades, canales de alerta."],
+  G8: ["Datos personales en entrenamiento y evaluación", "Uso o exposición de datos personales en entornos de agentes, entrenamiento o evaluación."]
+};
+const ARCHIVO_GOB = "gobernanza.csv";
+const TITULO_GOB = "Inventario de fallos de gobernanza interna de los laboratorios de IA";
+const TITULO_DOC = document.title;
+/* Aviso bajo el titular de la pestaña. Dejar vacío ("") cuando termine la segunda revisión. */
+const AVISO_GOB = "Versión inicial (26 oct. 2026): fichas pendientes de segunda revisión.";
+
+let GOB = [], FECHA_GOB = null, footDes = null;
+const estadoG = { q: "", actor: "", tipo: "", autor: "", verif: "", anio: "" };
+
+async function cargarGob() {
+  const embebido = document.getElementById("datos-gobernanza");
+  if (embebido) return { texto: embebido.textContent, fecha: null };
+  const res = await fetch(ARCHIVO_GOB, { cache: "no-cache" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const buf = await res.arrayBuffer();
+  let texto;
+  try { texto = new TextDecoder("utf-8", { fatal: true }).decode(buf); }
+  catch { texto = new TextDecoder("windows-1252").decode(buf); }
+  return { texto, fecha: res.headers.get("last-modified") };
+}
+
+function prepararGob(filas) {
+  return filas.filter(r => r.id).map(r => ({
+    ...r,
+    tipos: (r.tipos || "").split("|").map(s => s.trim().toUpperCase()).filter(Boolean),
+    relacionados: [...new Set((r.casos_relacionados || "").match(/MA-\d+/g) || [])],
+    anio: parseInt(((r.orden || r.fecha || "").match(/\d{4}/) || ["0"])[0], 10),
+    _texto: norm([r.id, r.titulo, r.actor, r.sistema, r.descripcion, r.evidencia, r.respuesta, r.relevancia_ue, r.atribucion, r.verificacion].join(" "))
+  })).sort((a, b) => (a.orden || "").localeCompare(b.orden || "") || a.id.localeCompare(b.id));
+}
+
+const coincideG = c =>
+  (!estadoG.q || estadoG.q.split(/\s+/).every(t => c._texto.includes(t))) &&
+  (!estadoG.actor || c.actor === estadoG.actor) &&
+  (!estadoG.tipo || c.tipos.includes(estadoG.tipo)) &&
+  (!estadoG.autor || c.autor_fallo === estadoG.autor) &&
+  (!estadoG.verif || c.verificacion === estadoG.verif) &&
+  (!estadoG.anio || String(c.anio) === estadoG.anio);
+
+/* Fichas GOB que remiten a un caso MA (se muestra en la ficha MA). */
+function gobDe(id) {
+  return GOB.filter(g => g.relacionados.includes(id))
+    .map(g => `<a href="#${esc(g.id)}" data-gob="${esc(g.id)}">${esc(g.id)}</a>`).join(", ");
+}
+
+function fichaGobHTML(c) {
+  const tipos = c.tipos.map(k => GTIPOS[k] ? `${k} ${GTIPOS[k][0]}` : k).join("; ");
+  const evid = c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.evidencia || c.url)}</a>` : esc(c.evidencia);
+  const rel = c.casos_relacionados
+    ? esc(c.casos_relacionados).split("|").map(s => s.trim()).filter(Boolean).join(", ")
+        .replace(/MA-\d+/g, id => CASOS.some(x => x.id === id) ? `<a href="#${id}" data-ma="${id}">${id}</a>` : id)
+    : "";
+  const fila = (t, v) => v ? `<dt>${t}</dt><dd>${v}</dd>` : "";
+  return `<li class="case gob" id="${esc(c.id)}" style="--sev:var(--accent)">
+    <button class="case-head" type="button" aria-expanded="false" aria-controls="b-${esc(c.id)}">
+      <span class="cid-l">${esc(c.id)}</span>
+      <span class="case-title">${esc(c.titulo)}</span>
+      <span class="case-meta">${esc(c.fecha)}. ${esc(c.actor)}</span>
+      <span class="tags"><span class="tag sev">${esc(c.tipos.join(" · "))}</span>${c.autor_fallo ? `<span class="tag">${esc(c.autor_fallo)}</span>` : ""}${enDesarrollo(c) ? '<span class="tag pend">En desarrollo</span>' : ""}</span>
+    </button>
+    <div class="case-body" id="b-${esc(c.id)}">
+      <p>${esc(c.descripcion)}</p>
+      ${enDesarrollo(c) ? `<p class="nota-verif">${NOTA_DESARROLLO}</p>` : ""}
+      <dl>
+        ${fila("Sistema", esc(c.sistema))}
+        ${fila("Tipo de fallo", esc(tipos))}
+        ${fila("Autor del fallo", esc(c.autor_fallo))}
+        ${fila("Atribución", esc(c.atribucion))}
+        ${fila("Fuente", evid)}
+        ${fila("Estado de verificación", esc(c.verificacion))}
+        ${fila("Respuesta del actor", esc(c.respuesta))}
+        ${fila("Marco jurídico de la UE", esc(c.relevancia_ue))}
+        ${fila("Casos de desalineación relacionados", rel)}
+      </dl>
+    </div>
+  </li>`;
+}
+
+function actualizarG() {
+  const vis = GOB.filter(coincideG);
+  const lista = [...vis].reverse();
+  $("#glist").innerHTML = lista.length ? lista.map(fichaGobHTML).join("") : `<li class="empty">Ninguna ficha cumple los criterios seleccionados. Puede restablecer los filtros para ver el inventario completo.</li>`;
+  $("#glist").querySelectorAll(".case-head").forEach(b => b.addEventListener("click", () => {
+    const li = b.closest(".case"), open = li.classList.toggle("open");
+    b.setAttribute("aria-expanded", open);
+  }));
+  const activos = Object.values(estadoG).some(Boolean);
+  $("#gcount").textContent = activos ? `${vis.length} de ${GOB.length} fichas` : `${GOB.length} fichas, de la más reciente a la más antigua`;
+  $("#gclear").hidden = !activos;
+  document.querySelectorAll("#gob-tipos .gt").forEach(b => b.classList.toggle("sel", estadoG.tipo === b.dataset.tipo));
+}
+
+function aplicarG(cambios, irAFichas) {
+  Object.keys(estadoG).forEach(k => estadoG[k] = "");
+  Object.assign(estadoG, cambios);
+  $("#gf-q").value = estadoG.q; $("#gf-actor").value = estadoG.actor; $("#gf-tipo").value = estadoG.tipo;
+  $("#gf-autor").value = estadoG.autor; $("#gf-verif").value = estadoG.verif; $("#gf-anio").value = estadoG.anio;
+  actualizarG();
+  if (irAFichas) $("#gob-fichas").scrollIntoView({ behavior: suave() });
+}
+
+function abrirGob(id) {
+  const c = GOB.find(x => x.id === id); if (!c) return;
+  if (!coincideG(c)) aplicarG({}, false);
+  const li = document.getElementById(id); if (!li) return;
+  li.classList.add("open"); li.querySelector(".case-head").setAttribute("aria-expanded", "true");
+  li.classList.remove("flash"); void li.offsetWidth; li.classList.add("flash");
+  li.scrollIntoView({ behavior: suave(), block: "start" });
+  li.querySelector(".case-head").focus({ preventScroll: true });
+}
+
+function dibujarTiposG() {
+  const cnt = k => GOB.filter(c => c.tipos.includes(k)).length;
+  const max = Math.max(1, ...Object.keys(GTIPOS).map(cnt));
+  $("#gob-tipos").innerHTML = Object.entries(GTIPOS).map(([k, v]) => {
+    const n = cnt(k);
+    return `<button type="button" class="gt" data-tipo="${k}" ${n ? "" : "disabled"} aria-label="${esc(k + " " + v[0])}: ${n} fichas"><span class="gt-id">${k}</span><span class="gt-name">${esc(v[0])}</span><span class="gt-bar" aria-hidden="true"><i style="width:${Math.round(100 * n / max)}%"></i></span><span class="gt-n">${n}</span></button>`;
+  }).join("");
+  $("#gob-tipos").querySelectorAll(".gt:not([disabled])").forEach(b => b.addEventListener("click", () => {
+    const mismo = estadoG.tipo === b.dataset.tipo;
+    aplicarG(mismo ? {} : { tipo: b.dataset.tipo }, !mismo);
+  }));
+}
+
+function cabeceraG() {
+  const n = GOB.length;
+  const ver = GOB.filter(c => !enDesarrollo(c)).length;
+  const enl = GOB.filter(c => c.relacionados.some(id => CASOS.some(x => x.id === id))).length;
+  const a0 = GOB[0]?.anio, a1 = GOB[n - 1]?.anio;
+  const item = (num, txt) => `<div><dd>${num}</dd><dt>${txt}</dt></div>`;
+  $("#gob-counters").innerHTML =
+    item(n, "fichas de gobernanza") + item(ver, "verificadas (hechos en fuente directa)") +
+    item(n - ver, "en desarrollo (prensa)") + item(enl, "enlazadas a un caso de desalineación") +
+    item(`${a0}–${a1}`, "periodo cubierto");
+  $("#gob-updated").innerHTML = `Última actualización: <b>${fechaLarga(FECHA_GOB || document.lastModified)}</b>.${AVISO_GOB ? " " + esc(AVISO_GOB) : ""}`;
+}
+
+function montarFiltrosG() {
+  const uniq = f => [...new Set(GOB.map(f).filter(Boolean))];
+  opciones($("#gf-actor"), uniq(c => c.actor).sort((a, b) => a.localeCompare(b, "es")).map(v => [v, v]), "Todos");
+  opciones($("#gf-tipo"), Object.entries(GTIPOS).map(([k, v]) => [k, `${k} ${v[0]}`]), "Todos");
+  opciones($("#gf-autor"), uniq(c => c.autor_fallo).sort((a, b) => a.localeCompare(b, "es")).map(v => [v, v]), "Todos");
+  opciones($("#gf-verif"), uniq(c => c.verificacion).sort((a, b) => a.localeCompare(b, "es")).map(v => [v, v]), "Todas");
+  opciones($("#gf-anio"), uniq(c => String(c.anio)).sort().reverse().map(v => [v, v]), "Todos");
+  $("#gf-q").addEventListener("input", e => { estadoG.q = norm(e.target.value.trim()); actualizarG(); });
+  [["#gf-actor", "actor"], ["#gf-tipo", "tipo"], ["#gf-autor", "autor"], ["#gf-verif", "verif"], ["#gf-anio", "anio"]].forEach(([s, k]) =>
+    $(s).addEventListener("change", e => { estadoG[k] = e.target.value; actualizarG(); }));
+  $("#gclear").addEventListener("click", () => aplicarG({}, false));
+}
+
+/* Pie: metodología, tipología, cita y descarga según la pestaña activa */
+function footGob() {
+  return `<div>
+        <h2>Metodología</h2>
+        <p>Se entiende por fallo de gobernanza interna una decisión u omisión organizativa del desarrollador, o de sus evaluadores y proveedores, que produce o permite conductas dañinas de sus sistemas, o que incumple compromisos de seguridad declarados, sin que la causa sea que el modelo persiga por su cuenta otra conducta.</p>
+        <p>Un mismo hecho puede tener una dimensión de desalineación y otra de gobernanza. En ese caso se registran dos fichas, enlazadas entre sí.</p>
+        <p>Las fuentes y el estado de verificación siguen los criterios del inventario de desalineación. El autor del fallo indica si se imputa al laboratorio, a un evaluador o a un proveedor, y la atribución, si la causa la verifica un tercero o solo la afirma el laboratorio.</p>
+      </div>
+      <div>
+        <h2>Tipología</h2>
+        <dl>${Object.entries(GTIPOS).map(([k, v]) => `<dt>${k} ${esc(v[0])}</dt><dd>${esc(v[1])}</dd>`).join("")}</dl>
+      </div>`;
+}
+
+function pie(p) {
+  const f = $("#foot-met"); if (!f) return;
+  if (footDes === null) footDes = f.innerHTML;
+  const gob = p === "gob";
+  f.innerHTML = gob ? footGob() : footDes;
+  const a1 = (gob ? GOB : CASOS).slice(-1)[0]?.anio || "s. f.";
+  const hoy = new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+  const url = location.href.split("#")[0] + (gob ? "#gobernanza" : "");
+  $("#cite").innerHTML = `Hernández Peña, J. C. y Polanco, J. (dirs.) (${a1}). <i>${esc(gob ? TITULO_GOB : TITULO)}</i>. Observatorio de PrivaIA Lab Navarra, Facultad de Derecho, Universidad de Navarra. Disponible en: ${esc(url)} [consulta: ${hoy}].`;
+  const arch = gob ? ARCHIVO_GOB : ARCHIVO;
+  $("#source").innerHTML = `Descarga de los datos: <a href="${arch}" download>${arch}</a>.`;
+}
+
+/* Pestañas */
+function mostrarPanel(p, tocarHash = true) {
+  const gob = p === "gob";
+  $("#panel-desal").hidden = gob; $("#panel-gob").hidden = !gob;
+  document.querySelectorAll(".tabs [role=tab]").forEach(b => {
+    const on = b.dataset.panel === p;
+    b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1;
+  });
+  if (!gob && CASOS.length) {
+    /* Los gráficos miden su contenedor: se redibujan al volver a mostrarlo. */
+    dibujarBarras(); dibujarSismografo();
+    const ids = new Set(CASOS.filter(coincide).map(c => c.id));
+    document.querySelectorAll("#seis .mk").forEach(g => g.classList.toggle("dim", !ids.has(g.dataset.id)));
+    marcarSeleccion();
+  }
+  pie(p);
+  document.title = gob ? `${TITULO_GOB} | Observatorio PrivaIA Lab Navarra` : TITULO_DOC;
+  if (tocarHash) history.replaceState(null, "", location.pathname + location.search + (gob ? "#gobernanza" : ""));
+}
+
+document.querySelectorAll(".tabs [role=tab]").forEach(b => {
+  b.addEventListener("click", () => mostrarPanel(b.dataset.panel));
+  b.addEventListener("keydown", e => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const tabs = [...document.querySelectorAll(".tabs [role=tab]")];
+    const sig = tabs[(tabs.indexOf(b) + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+    mostrarPanel(sig.dataset.panel); sig.focus();
+  });
+});
+
+/* Enlaces cruzados entre fichas MA y GOB */
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[data-ma], a[data-gob]"); if (!a) return;
+  e.preventDefault();
+  if (a.dataset.ma) { mostrarPanel("desal"); abrirCaso(a.dataset.ma); }
+  else { mostrarPanel("gob"); abrirGob(a.dataset.gob); }
+});
+
+function irAHash() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (!h) return;
+  if (h === "gobernanza") mostrarPanel("gob", false);
+  else if (/^GOB-\d+$/.test(h) && GOB.some(c => c.id === h)) { mostrarPanel("gob", false); abrirGob(h); }
+  else if (CASOS.some(c => c.id === h)) { mostrarPanel("desal", false); abrirCaso(h); }
+}
+addEventListener("hashchange", irAHash);
+
+/* Carga independiente: si gobernanza.csv falla, la pestaña de desalineación no se ve afectada. */
+async function iniciarGobernanza() {
+  try {
+    const { texto, fecha } = await cargarGob();
+    GOB = prepararGob(parseCSV(texto)); FECHA_GOB = fecha;
+    if (!GOB.length) throw new Error("sin fichas");
+    cabeceraG(); montarFiltrosG(); dibujarTiposG(); actualizarG();
+    $("#n-gob").textContent = `(${GOB.length})`;
+  } catch (err) {
+    $("#gob-contenido").hidden = true;
+    $("#gob-error").hidden = false;
+    $("#gob-error").innerHTML = `<p><strong>No se ha podido cargar ${ARCHIVO_GOB}.</strong> El archivo debe estar en la misma carpeta que index.html. Si la página se abre directamente desde el ordenador, el navegador bloquea la lectura de archivos locales: debe servirse desde una web o un servidor local.</p>`;
+  }
+  if (GOB.length) actualizar(); /* añade a las fichas MA el enlace a su ficha de gobernanza */
+}
+
 cargar().then(({ texto, fecha }) => {
   CASOS = preparar(parseCSV(texto));
   cabecera(fecha); montarFiltros(); dibujarBarras(); dibujarSismografo(); dibujarMapa(); actualizar();
   let ancho = innerWidth, t;
   addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { if (innerWidth !== ancho) { ancho = innerWidth; dibujarBarras(); dibujarSismografo(); actualizar(); } }, 200); });
-  const h = decodeURIComponent(location.hash.slice(1));
-  if (h && document.getElementById(h) && CASOS.some(c => c.id === h)) abrirCaso(h);
+  $("#n-desal").textContent = `(${CASOS.length})`;
+  iniciarGobernanza().then(irAHash);
 }).catch(err => {
   $("#counters").hidden = true;
   $("header.top").insertAdjacentHTML("beforeend", `<div class="error"><p><strong>No se ha podido cargar ${ARCHIVO}.</strong> El archivo debe estar en la misma carpeta que index.html. Si la página se abre directamente desde el ordenador, el navegador bloquea la lectura del archivo; la página funciona una vez publicada.</p><p>Detalle técnico: ${esc(err.message)}</p></div>`);

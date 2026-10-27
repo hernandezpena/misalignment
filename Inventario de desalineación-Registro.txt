@@ -1,0 +1,7 @@
+Inventario de desalineación/
+├── 2026-10-20_piloto/     ← todo lo anterior
+├── 2026-10-26/            ← incidentes.csv, README.md, gobernanza.csv + MANIFIESTO (GitHub, commit 025ca29)
+├── 2026-10-27/            ← index.html (pestaña «Gobernanza», prototipo en desarrollo), README.md, gobernanza.csv (correcciones mínimas) + MANIFIESTO (GitHub, 27 oct.)
+└── (siguientes subidas: AAAA-MM-DD)
+
+Regla: toda modificación de la web o de los datos que se suba a GitHub se registra aquí, con su carpeta AAAA-MM-DD y su manifiesto.
