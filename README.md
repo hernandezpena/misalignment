@@ -105,7 +105,7 @@ La página lee `incidentes.csv` y genera automáticamente el cuadro resumen, los
 
 **Alcance y límites.** El inventario recoge fallos de gobernanza interna documentados en fuentes públicas hasta la fecha de actualización. No pretende ser exhaustivo ni representativo, y el número de fichas por actor no permite comparar la frecuencia de fallos entre laboratorios: depende de la información que cada uno publica (informes, fichas técnicas, comunicaciones de incidentes) y de la atención que reciben de evaluadores y prensa. La ausencia de fichas de un actor no implica que no existan fallos. Las fichas con estado «En desarrollo (información periodística)» están pendientes de contraste con una fuente primaria, y todo el inventario está pendiente de segunda revisión.
 
-**Números retirados del inventario de desalineación:** MA-17 pasó a GOB-16 (26 oct. 2026). Los números no se reutilizan.
+**Números retirados del inventario de gobernanza:** GOB-01, GOB-03, GOB-12 y GOB-23 (descartadas en la revisión del 27 oct. 2026 por no cumplir los criterios de inclusión). Los números no se reutilizan.
 
 ## Estructura de los datos
 
@@ -166,3 +166,4 @@ Los datos y los contenidos de este inventario se publican bajo licencia [Creativ
 | 2026-10-26 | Fichas MA-40 a MA-44; MA-13 dividida (MA-43); MA-17 trasladada a gobernanza; actualización de fuentes y correcciones | Vigilancia semanal y revisión de fuentes |
 | 2026-10-26 | Inventario de fallos de gobernanza (`gobernanza.csv`, versión inicial) | Separar la gobernanza de la desalineación |
 | 2026-10-27 | Pestaña «Gobernanza» en la web (`index.html`): resumen, distribución por tipo, filtros, fichas y enlaces cruzados MA–GOB; párrafo «Alcance y límites» de gobernanza (README y web); la sección se señala como prototipo en desarrollo; correcciones mínimas de `gobernanza.csv` (enlace de GOB-24, respuesta de GOB-03 y GOB-07, referencias al RIA anteriores a su aplicabilidad, fuentes de GOB-09 y GOB-11); se elimina del README una línea suelta de enlace a un adjunto | Hacer visible el inventario de gobernanza |
+| 2026-10-27 | Revisión de gobernanza (primer lote): se retiran GOB-01, GOB-03, GOB-12 y GOB-23; GOB-09 reformulada (solo G4, atribución y respuesta corregidas, relevancia UE condicionada); MA-17 vuelve a `incidentes.csv` como caso controvertido y GOB-16 queda como ficha de su dimensión organizativa | Aplicación del protocolo de revisión de gobernanza |
